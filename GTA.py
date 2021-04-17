@@ -16,6 +16,7 @@ from fp16_optimizer import FP16_Optimizer
 from model import Tacotron2
 from data_utils import TextMelLoader, TextMelCollate
 from hparams import create_hparams
+from tqdm import tqdm
 
 def batchnorm_to_float(module):
     """Converts batch norm modules to FP32"""
@@ -105,7 +106,7 @@ def GTA_Synthesis(output_directory, checkpoint_path, n_gpus,
     max_itter = int(total_number_of_data/hparams.batch_size)
     remainder_size = total_number_of_data % hparams.batch_size
     
-    for i, batch in enumerate(train_loader):
+    for i, batch in enumerate(tqdm(train_loader)):
         batch_size = hparams.batch_size if i is not max_itter else remainder_size
         assert batch_size == 1
 
@@ -142,7 +143,7 @@ def GTA_Synthesis(output_directory, checkpoint_path, n_gpus,
             if i == 0:
                 os.makedirs(os.path.dirname(mel_path), exist_ok=True)
             np.save(mel_path, mel_outputs_postnet)
-        print('computed and saved GTA melspectrogram {}'.format(i))
+        #print('computed and saved GTA melspectrogram {}'.format(i))
     f.close()
 
 if __name__ == '__main__':
